@@ -1,0 +1,6 @@
+<testsuites status="true" failureCount="0" errorCount="0" testCount="1">
+  <testsuite name="tests.ZoomButtonTestCase" errors="0" failures="0" tests="1" time="0.237">
+    <properties/>
+    <testcase name="testZoomIn" time="0.237" className="tests.ZoomButtonTestCase"/>
+  </testsuite>
+</testsuites>

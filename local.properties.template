@@ -1,0 +1,32 @@
+#Copy this file locally to build.properties and change below for your env
+
+# change this to your Flex SDK directory path
+FLEX_HOME=C:/Program Files (x86)/Adobe/Flex Builder 3/sdks/3.2.0
+ 
+# this points to your project's src directory
+# {$basedir} is a default variable that can be used in any Antscript
+# and it points to the project's root folder [ flex_ant_pt1_Tasks ]
+# in this case
+srcpath.dir =${basedir}/src/FlexAGSCI/src
+
+# points to the project's libs directory
+libs.dir =${basedir}/src/FlexAGSCI/libs
+ 
+# this is the folder we want to publish the swf to
+deploypath.dir = ${basedir}/build
+
+wrapper.dir=${basedir}/src/FlexAGSCI/html-template
+
+version.major =0 
+version.minor=9 
+version.revision = 0 
+APP_TITLE = Flex Solution
+APP_WIDTH = 100% 
+APP_HEIGHT =100% 
+locale = en_US
+html.file=${deploypath.dir}/index.html
+application.name=FlexAGSCI
+
+#Fluint vars
+fluint.dir = ${basedir}/tools/FluintAIRTestRunner
+report.dir = ${deploypath.dir}/reports

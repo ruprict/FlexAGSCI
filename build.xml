@@ -1,0 +1,127 @@
+<project name='Flex Ant Tasks Build Script' default='build-flex-project'>
+	<!-- load properties file -->
+	<property name="env" value="local"/>
+	<property file='${env}.properties'/>
+	
+	<!-- points to are flexTasks.jar -->
+	<taskdef resource='flexTasks.tasks' />
+	<taskdef name='fluint' classname='net.digitalprimates.ant.tasks.fluint.Fluint'  />
+	
+	<!-- Copy the propeties file..used for CI Server base properties -->
+	<target name="copy-build-properties-file">
+		<copy file="local.properties.template" tofile="local.properties"/>
+	</target>
+	
+	<!-- delete and redeploy -->
+	<target name='init'>
+		<echo message="Environment: ${env}"/>
+		<delete includeemptydirs='true'>
+			<fileset dir='${deploypath.dir}' includes='**\*' excludes='**\.svn'/>
+		</delete>
+		
+	</target>
+	
+	<target name="clean-test">
+		<delete includeemptydirs='true' failonerror="false">
+			<fileset dir='${deploypath.dir}/tests' includes='**\*'/>
+		</delete>
+	</target>
+	
+	<target name='build-flex-project' depends='init,create-html-wrapper'>
+		<mxmlc file='${srcpath.dir}/${application.name}.mxml' output='${deploypath.dir}/${application.name}.swf'>
+			<load-config filename='${FLEX_HOME}/frameworks/flex-config.xml'/>
+			<include-libraries file='${libs.dir}' />
+		</mxmlc>
+		
+	</target>
+	
+	<target name='create-html-wrapper'>
+		<copy todir='${deploypath.dir}' overwrite="true">
+		      <fileset dir='${wrapper.dir}'>
+		       <exclude name='**/index.template.html' />
+		       <exclude name='**/index.template.html.svntmp' />
+		       <exclude name='.svn' />
+		      </fileset>
+		</copy>
+		  <!-- Copy and rename the index.template.html -->
+	     <copy file='${wrapper.dir}/index.template.html'
+		      tofile='${html.file}' />
+	      <replaceregexp 
+		      file='${html.file}'
+		      flags='gs'
+		      match='\$\{width\}'
+		      replace='100%'/>
+	       <replaceregexp 
+		      file='${html.file}'
+		      flags='gs'
+		      match='\$\{height\}'
+		      replace='100%'/>
+	     <replaceregexp 
+		      file='${html.file}'
+		      flags='gs'
+		      match='\$\{title\}'
+		      replace='${APP_TITLE}'
+		      encoding='utf-8'/>
+	     <replaceregexp 
+		      file='${html.file}'
+		      flags='gs'
+		      match='\$\{version_major\}'
+		      replace='${version.major}'/>
+	     <replaceregexp 
+		      file='${html.file}'
+		      flags='gs'
+		      match='\$\{version_minor\}'
+		      replace='${version.minor}'/>
+	       <replaceregexp 
+		      file='${html.file}'
+		      flags='gs'
+		      match='\$\{version_revision\}'
+		      replace='${version.revision}'/>
+	     <replaceregexp 
+		      file='${html.file}'
+		      flags='gs'
+		      match='\$\{application\}'
+		      replace='${APP_TITLE}'/>
+	      <replaceregexp 
+		      file='${html.file}'
+		      flags='gs'
+		      match='\$\{bgcolor\}'
+		      replace='#FFFFFF'/>
+	     <replaceregexp 
+		      file='${html.file}'
+		      flags='gs'
+		      match='\$\{swf\}'
+		      replace='${application.name}'/> 
+		      
+	</target>	
+	
+	<target name="build-test-module" depends="clean-test">
+		 <echo>Building test module</echo>
+		<mxmlc file='${srcpath.dir}/tests/ZoomButtonTestModule.mxml'  target-player="10.0.0"
+			output='${deploypath.dir}/tests/ZoomButtonTestModule.swf' >
+			 <load-config filename='${FLEX_HOME}/frameworks/flex-config.xml' />
+			 <source-path path-element='${FLEX_HOME}/frameworks'/>
+			 <!-- source paths -->
+			 <compiler.source-path path-element='${srcpath.dir}'/>
+
+			<!-- add external libraries -->
+			<include-libraries file='${libs.dir}' />					
+		</mxmlc>
+	</target>
+	
+	<target name='test' depends="build-test-module">
+		<fluint
+		   debug='true'
+		   headless='true'
+		   failOnError='true'
+		   workingDir='${fluint.dir}'
+		   testRunner='${fluint.dir}/FluintAIRTestRunner.exe'
+		   outputDir='${report.dir}'>
+
+		   <fileset dir='${deploypath.dir}/tests'>
+		      <include name='**/*TestModule.swf'/>
+		   </fileset>
+		</fluint>        
+	</target>
+	<target name="build-all" depends="build-flex-project"/>
+</project>

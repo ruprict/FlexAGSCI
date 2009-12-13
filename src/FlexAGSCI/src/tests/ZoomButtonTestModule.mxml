@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Module xmlns:mx="http://www.adobe.com/2006/mxml" implements="net.digitalprimates.fluint.modules.ITestSuiteModule">
+	<mx:Script>
+		<![CDATA[
+	
+			public function getTestSuites() : Array
+			{
+			 	var suiteArray : Array = new Array();
+	            suiteArray.push( new ZoomButtonTestSuite());
+	            return suiteArray;
+			}
+		]]>
+	</mx:Script>
+</mx:Module>
